@@ -4,85 +4,109 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FaPenToSquare } from 'react-icons/fa6'
 import axios from 'axios'
+import api from "../api";
+import Navbar from "/src/Components/Navbar";
 
-const API_URL = "http://localhost:8000/tasks";
+
 
 const Home = () => {
-  const [items, setItems] = useState([])
-  const [newItem, setNewItem] = useState("")
-  const [editingId, setEditingId] = useState(null)
-  const [editingText, setEditingText] = useState("")
-  const editInputRef = useRef(null)
+  const [items, setItems] = useState([]);
+  const [newItem, setNewItem] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState('');
+  const [user, setUser] = useState(null);
+  const editInputRef = useRef(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/tasks")
-      .then((res) => res.json())
-      .then((data) =>setItems(data))
-      .catch((err) => console.error(err));
+    fetchTasks();
+    fetchUser();
   }, []);
 
   useEffect(() => {
     if (editingId !== null && editInputRef.current) {
-      editInputRef.current.focus()
+      editInputRef.current.focus();
     }
-  }, [editingId])
+  }, [editingId]);
 
-  const handleAdd = () => {
-    if (!newItem.trim()) return
+  const fetchTasks = async () => {
+    try {
+      const res = await api.get('/tasks');
+      setItems(res.data);
+    } catch (err) {
+      console.error('Fetch tasks failed', err);
+      // if 401 -> redirect to login
+      if (err.response?.status === 401) {
+        window.location.href = '/login';
+      }
+    }
+  };
 
-    axios.post(API_URL, { title: newItem })
-      .then(res => {
-        setItems(prev => [res.data, ...prev])
-        setNewItem("")
-      })
-      .catch(err => console.error('Failed to add task:', err))
-  }
+  const fetchUser = async () => {
+    try {
+      const res = await api.get('/users');
+      setUser(res.data);
+    } catch (err) {
+      console.error("User fetch failed", err);
+      if (err.response?.status === 401) {
+        window.location.href = "/login";
+      }
+    }
+  };
 
-  const handleCheckbox = (id) => {
-    const task = items.find(item => item.id === id)
-    if (!task) return
 
-    axios.put(`${API_URL}/${id}`, { completed: !task.completed })
-      .then(res => {
-        setItems(prev =>
-          prev.map(item =>
-            item.id === id ? res.data : item
-          )
-        )
-      })
-      .catch(err => console.error('Failed to update task:', err))
-  }
+  const handleAdd = async () => {
+    if (!newItem.trim()) return;
+    try {
+      const res = await api.post('/tasks', { title: newItem });
+      setItems(prev => [res.data, ...prev]);
+      setNewItem('');
+    } catch (err) {
+      console.error('Failed to add task', err);
+      if (err.response?.status === 401) window.location.href = '/login';
+    }
+  };
 
-  const startEdit = (item) => {
-    setEditingId(item.id)
-    setEditingText(item.title)
-  }
+  const handleCheckbox = async (id) => {
+    const task = items.find(t => t.id === id);
+    if (!task) return;
+    try {
+      const res = await api.put(`/tasks/${id}`, { completed: !task.completed });
+      setItems(prev => prev.map(t => t.id === id ? res.data : t));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  const saveEdit = (id) => {
-    if (!editingText.trim()) return
+  const startEdit = (task) => {
+    setEditingId(task.id);
+    setEditingText(task.title);
+  };
 
-    axios.put(`${API_URL}/${id}`, { title: editingText })
-      .then(res => {
-        setItems(prev =>
-          prev.map(item =>
-            item.id === id ? res.data : item
-          )
-        )
-        setEditingId(null)
-        setEditingText("")
-      })
-      .catch(err => console.error('Failed to edit task:', err))
-  }
+  const saveEdit = async (id) => {
+    if (!editingText.trim()) return;
+    try {
+      const res = await api.put(`/tasks/${id}`, { title: editingText });
+      setItems(prev => prev.map(t => t.id === id ? res.data : t));
+      setEditingId(null);
+      setEditingText('');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  const handleDelete = (id) => {
-    axios.delete(`${API_URL}/${id}`)
-      .then(() => {
-        setItems(prev => prev.filter(item => item.id !== id))
-      })
-      .catch(err => console.error('Failed to delete task:', err))
-  }
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/tasks/${id}`);
+      setItems(prev => prev.filter(t => t.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
 
   return (
+    <>
+    <Navbar user={user}/>
     <div className="main-container">
       <div className="description">
         <h1>Stay organized every day!</h1>
@@ -149,6 +173,7 @@ const Home = () => {
         </ul>
       </div>
     </div>
+    </>
   )
 }
 

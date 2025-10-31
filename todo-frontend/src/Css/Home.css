@@ -1,13 +1,18 @@
 
 .main-container{
-    background:linear-gradient( #ffdd00, rgb(63, 63, 63));
+    background:linear-gradient(  white, #6ecfe5);
     height: 95vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    z-index: 999;
 }
+.main-container::before {
+  pointer-events: none; 
+}
+
 
 .main-container> .description{
   display: flex;
@@ -33,7 +38,7 @@
 }
 
 .inner-container>h1{
-    color: white;
+    color: #222;
 }
 
 .inner-container>ul{
