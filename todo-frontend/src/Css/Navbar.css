@@ -1,0 +1,44 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #222;
+    color: #ffdd00;
+    height: 65px;
+
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.profile-menu {
+    position: relative;
+}
+
+.profile-btn {
+    background: none;
+    border: none;
+    color: #ffdd00;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: absolute;
+    right: 0;
+    background:#ffdd00;
+    border-radius: 5px;
+    padding: 10px;
+    
+}
+
+.dropdown button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
