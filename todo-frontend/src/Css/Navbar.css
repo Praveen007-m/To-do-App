@@ -26,6 +26,7 @@
     border: none;
     color: #6ecfe5;
     cursor: pointer;
+    font-size: large;
 }
 
 .dropdown {
@@ -42,4 +43,6 @@
     
     border: none;
     cursor: pointer;
+    background:transparent;
+    height: 10px;
 }

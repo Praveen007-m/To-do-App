@@ -43,7 +43,8 @@ const Home = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await api.get('/users');
+      const res = await api.get('/user');
+      console.log("Fetched User:", res.data);
       setUser(res.data);
     } catch (err) {
       console.error("User fetch failed", err);
@@ -113,7 +114,7 @@ const Home = () => {
         <p>Create tasks, track progress, and boost your productivity with our smart To-Do List app.</p>
       </div>
       <div className="inner-container">
-        <h1>TO-DO LIST</h1>
+        <h2>{user?.name}'s To-Do List </h2>
 
         <div className="add-bar">
           <input

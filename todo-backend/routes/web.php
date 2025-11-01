@@ -4,10 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+Route::get('/login', [AuthController::class, 'login']);
 
 Route::post('/logout', function () {
     Auth::logout(); // ✅ logs out user

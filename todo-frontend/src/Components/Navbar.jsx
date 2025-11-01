@@ -36,7 +36,7 @@ const Navbar = ({ user}) => {
           className="profile-btn"
           onClick={() => setOpen(!open)}
         >
-          {user?.name} <FontAwesomeIcon icon={faAngleDown} />
+          {user?.name || "Profile"} <FontAwesomeIcon icon={faAngleDown} />
         </button>
 
         {open && (
